@@ -337,3 +337,50 @@
   .btn.primary:hover{
     background: #edc466;
   }
+
+  /* 32 tadan ko'p sayt bo'lganda ikonkalar kichrayadi */
+  .grid.compact{
+    gap: 8px;
+  }
+
+  .grid.compact .slot{
+    border-radius: 12px;
+    gap: 4px;
+  }
+
+  .grid.compact .site-icon{
+    width: 26px;
+    height: 26px;
+  }
+
+  .grid.compact .site-icon img{
+    width: 14px;
+    height: 14px;
+  }
+
+  .grid.compact .site-icon .fallback{
+    font-size: 10px;
+  }
+
+  .grid.compact .site-name{
+    font-size: 8px;
+  }
+
+  .grid.compact .plus-icon{
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+  }
+
+  .grid.compact .menu-trigger{
+    width: 15px;
+    height: 15px;
+    font-size: 12px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .grid.compact .dropdown{
+    top: 22px;
+    right: 4px;
+  }
