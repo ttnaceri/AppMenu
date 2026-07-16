@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Sites</title>
+<style>
+  :root{
+    --navy-deep: #0a1330;
+    --navy: #101c44;
+    --navy-card: #16234f;
+    --navy-card-hover: #1c2b60;
+    --brass: #e3b64f;
+    --brass-dim: #b3903e;
+    --ring: #2a3a72;
+    --text: #eef1fb;
+    --text-dim: #8d97bf;
+    --danger: #e2564f;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  body{
+    background: radial-gradient(circle at 30% 20%, #142352 0%, var(--navy-deep) 55%, #060b1e 100%);
+    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+  }
+
+  .wrap{
+    width: 100%;
+    max-width: 980px;
+  }
+
+  .header{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    padding: 0 4px;
+  }
+
+  .header h1{
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+
+  .header span{
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 900px){
+    .grid{ grid-template-columns: repeat(6, 1fr); }
+  }
+
+  @media (max-width: 680px){
+    .grid{ grid-template-columns: repeat(4, 1fr); }
+  }
+
+  @media (max-width: 420px){
+    .grid{ grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  }
+
+  .slot{
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    background: var(--navy-card);
+    border: 1px solid var(--ring);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+  }
+
+  .slot.filled{
+    cursor: default;
+  }
+
+  .slot.filled:hover{
+    background: var(--navy-card-hover);
+    border-color: #364a95;
+  }
+
+  .slot.empty{
+    background: transparent;
+    border: 1px dashed #253568;
+  }
+
+  .slot.add{
+    cursor: pointer;
+    background: transparent;
+    border: 1.5px dashed var(--brass-dim);
+  }
+
+  .slot.add:hover{
+    border-color: var(--brass);
+    background: rgba(227, 182, 79, 0.06);
+  }
+
+  .slot.add:active{
+    transform: scale(0.96);
+  }
+
+  .plus-icon{
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brass);
+    font-size: 18px;
+    font-weight: 300;
+    border: 1px solid var(--brass-dim);
+  }
+
+  .site-icon{
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #0d1636;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid var(--ring);
+  }
+
+  .site-icon img{
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+
+  .site-icon .fallback{
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brass);
+  }
+
+  .site-name{
+    font-size: 11px;
+    color: var(--text);
+    max-width: 92%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  .menu-trigger{
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    font-size: 16px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .slot.filled:hover .menu-trigger,
+  .menu-trigger.active{
+    opacity: 1;
+  }
+
+  .menu-trigger:hover{
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+  }
+
+  .dropdown{
+    position: absolute;
+    top: 34px;
+    right: 8px;
+    background: var(--navy-card-hover);
+    border: 1px solid var(--ring);
+    border-radius: 10px;
+    overflow: hidden;
+    min-width: 108px;
+    display: none;
+    flex-direction: column;
+    z-index: 5;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  }
+
+  .dropdown.open{
+    display: flex;
+  }
+
+  .dropdown button{
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 13px;
+    padding: 10px 12px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dropdown button:hover{
+    background: rgba(255,255,255,0.06);
+  }
+
+  .dropdown button.delete{
+    color: var(--danger);
+  }
+
+  .dropdown .divider{
+    height: 1px;
+    background: var(--ring);
+  }
+
+  .overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 8, 24, 0.65);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    padding: 20px;
+  }
+
+  .overlay.open{
+    display: flex;
+  }
+
+  .modal{
+    width: 100%;
+    max-width: 340px;
+    background: var(--navy-card);
+    border: 1px solid var(--ring);
+    border-radius: 16px;
+    padding: 22px;
+  }
+
+  .modal h2{
+    margin: 0 0 18px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .field{
+    margin-bottom: 14px;
+  }
+
+  .field label{
+    display: block;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .field input{
+    width: 100%;
+    background: var(--navy-deep);
+    border: 1px solid var(--ring);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+
+  .field input:focus{
+    border-color: var(--brass-dim);
+  }
+
+  .error-text{
+    font-size: 12px;
+    color: var(--danger);
+    margin: -8px 0 12px;
+    display: none;
+  }
+
+  .error-text.show{
+    display: block;
+  }
+
+  .modal-actions{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .btn{
+    padding: 9px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--ring);
+    background: transparent;
+    color: var(--text);
+  }
+
+  .btn:hover{
+    background: rgba(255,255,255,0.06);
+  }
+
+  .btn.primary{
+    background: var(--brass);
+    border-color: var(--brass);
+    color: #1a1204;
+  }
+
+  .btn.primary:hover{
+    background: #edc466;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <h1>Web sites</h1>
+    <span id="slotCount">0 / 32</span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add web site</h2>
+    <div class="field">
+      <label for="nameInput">Web site's name</label>
+      <input type="text" id="nameInput" placeholder="YouTube" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="urlInput">Web site's URL link</label>
+      <input type="text" id="urlInput" placeholder="https://youtube.com" autocomplete="off">
+    </div>
+    <div class="error-text" id="errorText">Enter both a name and a valid URL.</div>
+    <div class="modal-actions">
+      <button class="btn" id="cancelBtn">Cancel</button>
+      <button class="btn primary" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SLOT_COUNT = 32;
+  const STORAGE_KEY = 'sites';
+  let sites = new Array(SLOT_COUNT).fill(null);
+  let storageReady = false;
+
+  let editingIndex = null;
+  let openMenuIndex = null;
+
+  const grid = document.getElementById('grid');
+  const overlay = document.getElementById('overlay');
+  const nameInput = document.getElementById('nameInput');
+  const urlInput = document.getElementById('urlInput');
+  const errorText = document.getElementById('errorText');
+  const modalTitle = document.getElementById('modalTitle');
+  const slotCount = document.getElementById('slotCount');
+
+  function firstEmptyIndex(){
+    return sites.findIndex(s => s === null);
+  }
+
+  function normalizeUrl(raw){
+    let u = raw.trim();
+    if (!/^https?:\/\//i.test(u)) {
+      u = 'https://' + u;
+    }
+    return u;
+  }
+
+  function faviconFor(url){
+    try{
+      const host = new URL(url).hostname;
+      return 'https://www.google.com/s2/favicons?sz=64&domain=' + host;
+    }catch(e){
+      return '';
+    }
+  }
+
+  function loadSites(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw){
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length === SLOT_COUNT){
+          sites = parsed;
+        }
+      } else {
+        sites[0] = { name: 'YouTube', url: 'https://youtube.com' };
+        saveSites();
+      }
+    }catch(e){
+      sites[0] = { name: 'YouTube', url: 'https://youtube.com' };
+    }
+    storageReady = true;
+    render();
+  }
+
+  function saveSites(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+    }catch(e){
+      console.error('Storage error:', e);
+    }
+  }
+
+  function render(){
+    if (!storageReady){
+      grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; color: var(--text-dim); padding: 30px 0;">Loading…</div>';
+      return;
+    }
+    grid.innerHTML = '';
+    const emptyIdx = firstEmptyIndex();
+    const filledCount = sites.filter(s => s !== null).length;
+    slotCount.textContent = filledCount + ' / ' + SLOT_COUNT;
+
+    for (let i = 0; i < SLOT_COUNT; i++){
+      const site = sites[i];
+      const slotEl = document.createElement('div');
+
+      if (site){
+        slotEl.className = 'slot filled';
+
+        const iconWrap = document.createElement('div');
+        iconWrap.className = 'site-icon';
+        const favUrl = faviconFor(site.url);
+        if (favUrl){
+          const img = document.createElement('img');
+          img.src = favUrl;
+          img.alt = '';
+          img.onerror = () => { iconWrap.innerHTML = '<span class="fallback">' + site.name.charAt(0).toUpperCase() + '</span>'; };
+          iconWrap.appendChild(img);
+        } else {
+          iconWrap.innerHTML = '<span class="fallback">' + site.name.charAt(0).toUpperCase() + '</span>';
+        }
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'site-name';
+        nameEl.textContent = site.name;
+
+        const trigger = document.createElement('button');
+        trigger.className = 'menu-trigger';
+        trigger.setAttribute('aria-label', 'More options');
+        trigger.textContent = '\u22EE';
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openMenuIndex = openMenuIndex === i ? null : i;
+          render();
+        });
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'dropdown' + (openMenuIndex === i ? ' open' : '');
+
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openMenuIndex = null;
+          openModal(i);
+        });
+
+        const divider = document.createElement('div');
+        divider.className = 'divider';
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete';
+        delBtn.textContent = 'Delete';
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sites[i] = null;
+          openMenuIndex = null;
+          render();
+          saveSites();
+        });
+
+        dropdown.appendChild(editBtn);
+        dropdown.appendChild(divider);
+        dropdown.appendChild(delBtn);
+
+        if (openMenuIndex === i) trigger.classList.add('active');
+
+        slotEl.appendChild(trigger);
+        slotEl.appendChild(dropdown);
+        slotEl.appendChild(iconWrap);
+        slotEl.appendChild(nameEl);
+
+        slotEl.addEventListener('click', () => {
+          window.open(site.url, '_blank', 'noopener');
+        });
+
+      } else if (i === emptyIdx){
+        slotEl.className = 'slot add';
+        const plus = document.createElement('div');
+        plus.className = 'plus-icon';
+        plus.textContent = '+';
+        slotEl.appendChild(plus);
+        slotEl.addEventListener('click', () => openModal(i));
+
+      } else {
+        slotEl.className = 'slot empty';
+      }
+
+      grid.appendChild(slotEl);
+    }
+  }
+
+  function openModal(index){
+    editingIndex = index;
+    const existing = sites[index];
+    modalTitle.textContent = existing ? 'Edit web site' : 'Add web site';
+    nameInput.value = existing ? existing.name : '';
+    urlInput.value = existing ? existing.url : '';
+    errorText.classList.remove('show');
+    overlay.classList.add('open');
+    setTimeout(() => nameInput.focus(), 50);
+  }
+
+  function closeModal(){
+    overlay.classList.remove('open');
+    editingIndex = null;
+  }
+
+  document.getElementById('cancelBtn').addEventListener('click', closeModal);
+
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    const rawUrl = urlInput.value.trim();
+
+    if (!name || !rawUrl){
+      errorText.textContent = 'Enter both a name and a URL.';
+      errorText.classList.add('show');
+      return;
+    }
+
+    const url = normalizeUrl(rawUrl);
+    try{
+      new URL(url);
+    }catch(e){
+      errorText.textContent = 'That URL doesn\'t look valid.';
+      errorText.classList.add('show');
+      return;
+    }
+
+    sites[editingIndex] = { name, url };
+    closeModal();
+    render();
+    saveSites();
+  });
+
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+  });
+
+  document.addEventListener('click', () => {
+    if (openMenuIndex !== null){
+      openMenuIndex = null;
+      render();
+    }
+  });
+
+  loadSites();
+</script>
+
+</body>
+</html>
