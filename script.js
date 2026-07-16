@@ -5,6 +5,7 @@ let storageReady = false;
 
 let editingIndex = null;
 let openMenuIndex = null;
+let draggedIndex = null;
 
 const grid = document.getElementById('grid');
 const overlay = document.getElementById('overlay');
@@ -73,7 +74,6 @@ function render() {
   const filledCount = sites.filter(s => s !== null).length;
   slotCount.textContent = `${filledCount} / ${SLOT_COUNT}`;
 
-  // 32 tadan ko'p sayt bo'lsa — kichraytirilgan rejimga o'tadi
   if (filledCount > 32) {
     grid.classList.add('compact');
   } else {
@@ -86,6 +86,7 @@ function render() {
 
     if (site) {
       slotEl.className = 'slot filled';
+      slotEl.draggable = true;
 
       const iconWrap = document.createElement('div');
       iconWrap.className = 'site-icon';
@@ -167,24 +168,84 @@ function render() {
         window.open(site.url, '_blank', 'noopener');
       });
 
-    } else if (i === emptyIdx) {
+      // --- Drag & drop ---
+      slotEl.addEventListener('dragstart', (e) => {
+        draggedIndex = i;
+        slotEl.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
 
-      slotEl.className = 'slot add';
+      slotEl.addEventListener('dragend', () => {
+        slotEl.classList.remove('dragging');
+        draggedIndex = null;
+      });
 
-      const plus = document.createElement('div');
-      plus.className = 'plus-icon';
-      plus.textContent = '+';
+      slotEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        slotEl.classList.add('drag-over');
+      });
 
-      slotEl.appendChild(plus);
+      slotEl.addEventListener('dragleave', () => {
+        slotEl.classList.remove('drag-over');
+      });
 
-      slotEl.addEventListener('click', () => {
-        openModal(i);
+      slotEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slotEl.classList.remove('drag-over');
+
+        if (draggedIndex === null || draggedIndex === i) return;
+
+        const temp = sites[i];
+        sites[i] = sites[draggedIndex];
+        sites[draggedIndex] = temp;
+
+        draggedIndex = null;
+        render();
+        saveSites();
       });
 
     } else {
+      // Bo'sh slotlar ham drop nishoni bo'la oladi (saytni bo'sh joyga tashlash uchun)
+      slotEl.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        slotEl.classList.add('drag-over');
+      });
 
-      slotEl.className = 'slot empty';
+      slotEl.addEventListener('dragleave', () => {
+        slotEl.classList.remove('drag-over');
+      });
 
+      slotEl.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slotEl.classList.remove('drag-over');
+
+        if (draggedIndex === null || draggedIndex === i) return;
+
+        sites[i] = sites[draggedIndex];
+        sites[draggedIndex] = null;
+
+        draggedIndex = null;
+        render();
+        saveSites();
+      });
+
+      if (i === emptyIdx) {
+        slotEl.className = 'slot add';
+
+        const plus = document.createElement('div');
+        plus.className = 'plus-icon';
+        plus.textContent = '+';
+
+        slotEl.appendChild(plus);
+
+        slotEl.addEventListener('click', () => {
+          openModal(i);
+        });
+      } else {
+        slotEl.className = 'slot empty';
+      }
     }
 
     grid.appendChild(slotEl);
