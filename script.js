@@ -1,4 +1,4 @@
-const SLOT_COUNT = 32;
+const SLOT_COUNT = 64;
 const STORAGE_KEY = 'sites';
 let sites = new Array(SLOT_COUNT).fill(null);
 let storageReady = false;
@@ -72,6 +72,13 @@ function render() {
   const emptyIdx = firstEmptyIndex();
   const filledCount = sites.filter(s => s !== null).length;
   slotCount.textContent = `${filledCount} / ${SLOT_COUNT}`;
+
+  // 32 tadan ko'p sayt bo'lsa — kichraytirilgan rejimga o'tadi
+  if (filledCount > 32) {
+    grid.classList.add('compact');
+  } else {
+    grid.classList.remove('compact');
+  }
 
   for (let i = 0; i < SLOT_COUNT; i++) {
     const site = sites[i];
