@@ -384,3 +384,15 @@
     top: 22px;
     right: 4px;
   }
+.slot.filled{
+    cursor: grab;
+  }
+
+  .slot.dragging{
+    opacity: 0.35;
+  }
+
+  .slot.drag-over{
+    border-color: var(--brass);
+    background: rgba(227, 182, 79, 0.12);
+  }
