@@ -141,7 +141,9 @@ function load(){
       { name: "App Menu", url: "https://ttnaceri.github.io/AppMenu/" },
       { name: "Vcoin Payment", url: "https://ttnaceri.github.io/Vcoin-Payment.net/" },
       { name: "Vapynshop", url: "https://ttnaceri.github.io/Vapynshop/" },
-      { name: "Awebshop", url: "https://ttnaceri.github.io/AwebShop/" }
+      { name: "Awebshop", url: "https://ttnaceri.github.io/AwebShop/" },
+      { name: "Telegram Channel", url: "https://t.me/updateDevNews" },
+      { name: "Telegram Group", url: "https://t.me/FuzzAppBot" }
     ];
     excelData.forEach(site => defaultFolder.children.push({ id: uid(), type: 'site', name: site.name, url: site.url }));
     state.pages = [[defaultFolder]];
