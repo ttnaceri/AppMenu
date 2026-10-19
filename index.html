@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Menu</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div class="header-left">
+      <button class="icon-btn" id="backBtn" title="Orqaga" style="display:none"><i class="fa-solid fa-arrow-left"></i></button>
+      <h1 id="title">App Menu</h1>
+      <span class="breadcrumb" id="breadcrumb"></span>
+    </div>
+    <div class="header-right">
+      <span id="slotCount">0 / 32</span>
+      <button class="icon-btn" id="settingsBtn" title="Sozlamalar"><i class="fa-solid fa-gear"></i></button>
+    </div>
+  </div>
+
+  <div class="widgets" id="widgets">
+    <div class="widget">
+      <div class="widget-label">Vaqt</div>
+      <div class="widget-value" id="clock">--:--:--</div>
+    </div>
+    <div class="widget">
+      <div class="widget-label">Sana</div>
+      <div class="widget-value" id="date">--</div>
+    </div>
+  </div>
+
+  <div class="grid-viewport">
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="pager">
+    <button class="nav-btn" id="prevPage" title="Oldingi sahifa"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="page-label" id="pageLabel">1 / 1</span>
+    <button class="nav-btn" id="nextPage" title="Keyingi sahifa"><i class="fa-solid fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<footer class="footer">
+  <span>UPDATE Inc.</span>
+</footer>
+
+<!-- Tanlov Modal -->
+<div class="overlay" id="choiceOverlay">
+  <div class="modal choice-modal">
+    <h2>What to add?</h2>
+    <div class="choice-actions">
+      <button class="btn choice-btn" id="chooseSiteBtn">
+        <span class="choice-icon"><i class="fa-solid fa-globe"></i></span>
+        Web Site
+      </button>
+      <button class="btn choice-btn" id="chooseFolderBtn">
+        <span class="choice-icon"><i class="fa-solid fa-folder"></i></span>
+        Folder
+      </button>
+    </div>
+    <div class="modal-actions" style="justify-content: center; margin-top: 10px;">
+      <button class="btn" id="cancelChoiceBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sayt / Papka Formasi -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Add web site</h2>
+    
+    <div class="field" id="nameField">
+      <label for="nameInput" id="nameLabel">Web site's name</label>
+      <input type="text" id="nameInput" placeholder="Name" autocomplete="off">
+    </div>
+    
+    <div class="field" id="urlField">
+      <label for="urlInput">Web site's URL link</label>
+      <input type="text" id="urlInput" placeholder="https://..." autocomplete="off">
+    </div>
+
+    <div class="error-text" id="errorText">Xatolik yuz berdi.</div>
+    
+    <div class="modal-actions">
+      <button class="btn" id="cancelBtn">Cancel</button>
+      <button class="btn primary" id="saveBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Sozlamalar Modali -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <h2>Settings</h2>
+    
+    <div class="field">
+      <label>Backup</label>
+      <div class="settings-actions">
+        <button class="btn" id="exportBtn"><i class="fa-solid fa-download"></i> Export</button>
+        <button class="btn" id="importBtn"><i class="fa-solid fa-upload"></i> Import</button>
+        <input type="file" id="importFile" accept="application/json" hidden>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="gridSizeSelect">Grid Size (Ustun / Qator)</label>
+      <select id="gridSizeSelect" class="form-select">
+        <optgroup label="Telefonlar uchun">
+          <option value="4x5">4 x 5</option>
+          <option value="4x6">4 x 6</option>
+          <option value="5x5">5 x 5</option>
+          <option value="5x6">5 x 6</option>
+        </optgroup>
+        <optgroup label="Kompyuterlar uchun">
+          <option value="6x6">6 x 6 (36 ta)</option>
+          <option value="8x4">8 x 4 (32 ta - Default)</option>
+          <option value="8x8">8 x 8 (64 ta)</option>
+          <option value="10x10">10 x 10 (100 ta)</option>
+          <option value="10x15">10 x 15 (150 ta - Maksimal)</option>
+          <option value="15x10">15 x 10 (150 ta - Maksimal)</option>
+        </optgroup>
+      </select>
+      <span class="hint">Ctrl + Scroll orqali ham hajmni o'zgartirish mumkin.</span>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn primary" id="closeSettingsBtn">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Kontekst Menyu -->
+<div class="context-menu" id="contextMenu">
+  <button id="ctxOpen"><i class="fa-solid fa-up-right-from-square"></i> Open</button>
+  <div class="divider" id="ctxDivider"></div>
+  <button id="ctxDelete" class="delete"><i class="fa-solid fa-trash"></i> Delete</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
